@@ -102,6 +102,19 @@ class ConfirmationTest < ActionDispatch::IntegrationTest
     assert_current_url "/?custom=1"
   end
 
+  test 'user should generate an error when his email is not found on a new password confirmation' do
+    user = create_user(confirm: false)
+
+    visit new_user_session_path
+    click_link "Didn't receive confirmation instructions?"
+
+    fill_in 'email', with: 'this_email_does_not_exist@mail.example'
+    click_button 'Resend confirmation instructions'
+
+    assert_contain 'Confirmation instructions could not be sent:'
+    assert_contain 'not found'
+  end
+
   test 'already confirmed user should not be able to confirm the account again' do
     user = create_user(confirm: false)
     user.confirmed_at = Time.now

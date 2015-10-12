@@ -66,6 +66,7 @@ class PasswordTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_current_url '/users/password'
       assert_have_selector "input[type=email][value='foo@bar.com']"
+      assert_contain 'Reset password instructions could not be sent:'
       assert_contain 'not found'
     end
   end
@@ -92,6 +93,7 @@ class PasswordTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_current_url '/users/password'
       assert_have_selector "input[type=email][value=' foo@bar.com ']"
+      assert_contain 'Reset password instructions could not be sent:'
       assert_contain 'not found'
     end
   end
@@ -122,6 +124,7 @@ class PasswordTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_current_url '/users/password'
     assert_have_selector "input[type=email][value='invalid.test@test.com']"
+    assert_contain 'Reset password instructions could not be sent:'
     assert_contain 'not found'
   end
 
@@ -313,7 +316,7 @@ class PasswordTest < ActionDispatch::IntegrationTest
       fill_in "email", with: "arandomemail@test.com"
       click_button 'Send me reset password instructions'
 
-      assert_not_contain "1 error prohibited this user from being saved:"
+      assert_not_contain "Reset password instructions could not be sent:"
       assert_not_contain "Email not found"
       assert_contain "If your email address exists in our database, you will receive a password recovery link at your email address in a few minutes."
       assert_current_url "/users/sign_in"

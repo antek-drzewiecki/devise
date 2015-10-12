@@ -30,6 +30,22 @@ class LockTest < ActionDispatch::IntegrationTest
     assert_match user_unlock_path(unlock_token: 'abcdef'), mail.body.encoded
   end
 
+  test 'no email should be sent to an email adress that does not exists' do
+    user = create_user(locked: true)
+    ActionMailer::Base.deliveries.clear
+
+    visit new_user_session_path
+    click_link "Didn't receive unlock instructions?"
+
+    fill_in 'email', with: 'some_random_email_that_does_not_exists'
+    click_button 'Resend unlock instructions'
+
+    assert_template 'unlocks/new'
+    assert_contain 'Unlock instructions could not be sent:'
+    assert_contain 'not found'
+    assert_equal 0, ActionMailer::Base.deliveries.size
+  end
+
   test 'user should receive the instructions from a custom mailer' do
     User.any_instance.stubs(:devise_mailer).returns(Users::Mailer)
 

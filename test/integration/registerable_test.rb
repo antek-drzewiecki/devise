@@ -113,6 +113,7 @@ class RegistrationTest < ActionDispatch::IntegrationTest
     assert_contain Devise.rails4? ?
       "Password confirmation doesn't match Password" : "Password doesn't match confirmation"
     assert_contain "2 errors prohibited"
+    assert_contain "2 errors prohibited"
     assert_nil User.to_adapter.find_first
 
     assert_not warden.authenticated?(:user)
